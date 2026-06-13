@@ -401,31 +401,41 @@ def generate_financial_report(
             "expense_distribution.png"
         )
 
-        fig.write_image(
-            category_chart_path
-        )
+        try:
+            fig.write_image(category_chart_path)
+            chart_created = True
+        except Exception:
+            chart_created = False
 
-        elements.append(
+        chart_content = [
 
-            KeepTogether([
+            Paragraph(
+                "Expense Distribution",
+                styles["Heading2"]
+            ),
 
-                Paragraph(
-                    "Expense Distribution",
-                    styles["Heading2"]
-                ),
+            Spacer(1, 10)
 
-                Spacer(1, 10),
+        ]
+
+        if chart_created:
+
+            chart_content.append(
 
                 Image(
                     category_chart_path,
-                    width=420,
-                    height=280
-                ),
+                    width=450,
+                    height=300
+                )
 
-                Spacer(1, 20)
+            )
 
-            ])
+        chart_content.append(
+            Spacer(1, 20)
+        )
 
+        elements.append(
+            KeepTogether(chart_content)
         )
             
         
