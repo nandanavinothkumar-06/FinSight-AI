@@ -1,4 +1,6 @@
 import streamlit as st
+import os
+import tempfile
 import plotly.express as px
 from reportlab.lib import styles
 from reportlab.platypus import (
@@ -359,83 +361,64 @@ def generate_financial_report(
 
     if not df.empty:
 
-        expense_by_category = (
+        expense_distribution = (
             df.groupby("Category")["Amount"]
             .sum()
             .sort_values(ascending=True)
-            .reset_index()
         )
 
-        fig = px.bar(
+        plt.figure(figsize=(8, 5))
 
-            expense_by_category,
-
-            x="Amount",
-
-            y="Category",
-
-            orientation="h",
-
-            title="Expense Distribution by Category",
-
-            text="Amount"
-
+        expense_distribution.plot(
+            kind="barh"
         )
 
-        fig.update_traces(
-            texttemplate="₹%{x:,.0f}",
-            textposition="inside"
+        plt.title(
+            "Expense Distribution by Category"
         )
 
-        fig.update_layout(
-            height=550,
-            margin=dict(
-                l=80,
-                r=80,
-                t=60,
-                b=60
+        plt.xlabel("Amount")
+        plt.ylabel("Category")
+
+        plt.tight_layout()
+
+        temp_dir = tempfile.gettempdir()
+
+        category_chart_path = (
+            os.path.join(
+                temp_dir,
+                "expense_distribution.png"
             )
         )
 
-        category_chart_path = (
-            "expense_distribution.png"
+        plt.savefig(
+            category_chart_path,
+            bbox_inches="tight"
         )
 
-        try:
-            fig.write_image(category_chart_path)
-            chart_created = True
-        except Exception:
-            chart_created = False
+        plt.close()
 
-        chart_content = [
-
+        elements.append(
             Paragraph(
                 "Expense Distribution",
                 styles["Heading2"]
-            ),
-
-            Spacer(1, 10)
-
-        ]
-
-        if chart_created:
-
-            chart_content.append(
-
-                Image(
-                    category_chart_path,
-                    width=450,
-                    height=300
-                )
-
             )
-
-        chart_content.append(
-            Spacer(1, 20)
         )
 
         elements.append(
-            KeepTogether(chart_content)
+            Spacer(1, 10)
+        )
+
+        elements.append(
+            Image(
+                category_chart_path,
+                width=450,
+                height=300
+            )
+        )
+
+        elements.append(
+            Spacer(1, 20)
         )
             
         
