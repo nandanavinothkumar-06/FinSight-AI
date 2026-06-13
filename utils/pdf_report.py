@@ -1,7 +1,5 @@
-import streamlit as st
 import os
 import tempfile
-import plotly.express as px
 from reportlab.lib import styles
 from reportlab.platypus import (
     SimpleDocTemplate,
@@ -874,14 +872,12 @@ def generate_financial_report(
     add_pdf_metadata
 
 )
-    
-    import os
 
-    if os.path.exists(category_chart_path):
+    if category_chart_path and os.path.exists(category_chart_path):
         os.remove(category_chart_path)
 
-    if os.path.exists(trend_path):
+    if trend_path and os.path.exists(trend_path):
         os.remove(trend_path)
 
-    if os.path.exists(stability_chart):
+    if stability_chart and os.path.exists(stability_chart):
         os.remove(stability_chart)
